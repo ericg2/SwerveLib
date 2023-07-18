@@ -61,12 +61,14 @@ public class Angle {
                 switch (newUnit) {
                     case RADIANS: return 1 * (Math.PI/180);
                     case DEGREES: return value;
+                    case ROTATIONS: return value / 360;
                 }
             }
             case RADIANS: {
                 switch (newUnit) {
                     case RADIANS: return value;
                     case DEGREES: return 1 * (180/Math.PI);
+                    case
                 }
             }
             default: return value;

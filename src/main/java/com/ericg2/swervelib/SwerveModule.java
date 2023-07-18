@@ -83,13 +83,9 @@ public class SwerveModule {
      */
     public SwerveModulePosition getPosition() {
         return new SwerveModulePosition(
-                get
+                g
                 getTurnAngle()
         );
-    }
-
-    public double getRPM() {
-        return driveEncoder.getVelocity();
     }
 
     public void updateDashboard(String prefix) {
