@@ -1,7 +1,8 @@
-package com.ericg2.swervelib;
+package com.ericg2.swervelib.module;
 
 import com.ericg2.swervelib.exception.InvalidConfigurationException;
 import com.ericg2.swervelib.math.*;
+import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -25,32 +26,47 @@ public class SwerveModule {
         this.config = config;
     }
 
-    public Velocity getDriveVelocity() {
-        return config.getDriveRatio().getWheelSpeed(config.getDriveEncoder().getVelocity(), config.getWheelDiameter())
+    public Velocity getVelocity() {
+        return config.getDriveRatio().getWheelVelocity(
+                config.getDriveEncoder().getVelocity(),
+                config.getWheelDiameter()
+        );
     }
 
-    public Angle getTurnRotation() {
-        Angle angleDegNoOffset = config.getTurnRatio().motorRotationsToAngle(config.getTurnEncoder().get());
-        return angleDegNoOffset.Add(config.getOffset());
+    public Velocity getMaxVelocity() { return config.getMaxVelocity(); }
+    public AngularVelocity getMaxTurnVelocity() { return config.getMaxTurnVelocity(); }
+    public SwerveModuleConfiguration getConfig() { return this.config; }
+
+    private Rotation2d getTurnAngleNoOffset() {
+        return config
+                .getTurnRatio()
+                .motorRotationsToAngle(config.getTurnEncoder().get());
+    }
+
+    public Rotation2d getTurnAngle() {
+        if (config.getTuningModeSupplier().get())
+            return getTurnAngleNoOffset();
+        else
+            return getTurnAngleNoOffset().plus(config.getOffset());
     }
 
     public void setState(SwerveModuleState state, boolean isClosedLoop) {
-        state = SwerveModuleState.optimize(state, getTurnRotation().toRotation2d());
+        state = SwerveModuleState.optimize(state, getTurnAngle());
 
         double turnPower = config.getTurnController().calculate(
-                getTurnRotation().getDegrees(),
+                getTurnAngle().getDegrees(),
                 state.angle.getDegrees()
         );
 
         double drivePower;
         if (isClosedLoop) {
             drivePower = config.getDriveController().calculate(
-                    getDriveVelocity().getValue(VelocityUnit.MPS),
+                    getVelocity().toMPS(),
                     state.speedMetersPerSecond
             );
         } else {
-            drivePower = Velocity.fromValue(state.speedMetersPerSecond, VelocityUnit.MPS)
-                    .toMotorPower(config.getMaxSpeed());
+            drivePower = Velocity.fromMPS(state.speedMetersPerSecond)
+                    .toMotorPower(config.getMaxVelocity());
         }
 
         config.getDriveMotor().set(drivePower);
@@ -67,8 +83,8 @@ public class SwerveModule {
      */
     public SwerveModuleState getState() {
         return new SwerveModuleState(
-                getDriveVelocity().getValue(VelocityUnit.MPS),
-                getTurnRotation().toRotation2d()
+                getVelocity().toMPS(),
+                getTurnAngle()
         );
     }
 
@@ -83,36 +99,38 @@ public class SwerveModule {
      */
     public SwerveModulePosition getPosition() {
         return new SwerveModulePosition(
-                g
+                getDistance().toMeters(),
                 getTurnAngle()
         );
     }
 
-    public void updateDashboard(String prefix) {
-        String driveVelocity = prefix + ": rpm";
+    public void update() {
+        String prefix = config.getModuleSide().toString();
+        String driveVelocity = prefix + ": mph";
         String drivePower = prefix + ": pow";
         String turnPower = prefix + ": turn pow";
-        String turnPosition = prefix + ": turn rad";
+        String turnPosition = prefix + ": turn deg";
+        String distanceDriven = prefix + ": distance";
 
+        if (config.getTestModeSupplier().get()) {
+            SmartDashboard.putNumber(driveVelocity, getVelocity().toMPH());
+            SmartDashboard.putNumber(drivePower, config.getDriveMotor().get());
+            SmartDashboard.putNumber(turnPower, config.getTurnMotor().get());
+            SmartDashboard.putNumber(turnPosition, getTurnAngle().getDegrees());
 
-
-        if (TEST_MODE) {
-            SmartDashboard.putNumber(driveVelocity, getRPM());
-            SmartDashboard.putNumber(turnPower, turnMotor.get());
-            SmartDashboard.putNumber(turnPosition, turnAngleRadians());
-            SmartDashboard.putNumber(drivePower, driveMotor.get());
-            SmartDashboard.putNumber(prefix + " offset tuning rad:", turnAngleRadiansNoOffset());
-            SmartDashboard.putNumber(prefix + " drive encoder: ", driveEncoder.getPosition());
+            SmartDashboard.putNumber(distanceDriven, getDistance().toFeet());
         }
-
     }
 
 
-    public Distance getDistanceDriven() {
-        return config.getDriveEncoder().getPosition()
+    public Distance getDistance() {
+        return config.getDriveRatio().getWheelDistance(
+                config.getDriveEncoder().getPosition(),
+                config.getWheelDiameter()
+        );
     }
 
-    public void resetDriveEncoder() {
-        driveEncoder.setPosition(0);
+    public void reset() {
+        config.getDriveEncoder().setPosition(0);
     }
 }

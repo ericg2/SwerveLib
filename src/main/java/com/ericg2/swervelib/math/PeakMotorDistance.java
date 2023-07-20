@@ -20,10 +20,10 @@ public class PeakMotorDistance {
 
     /** @return rotation to distance based on unit */
     public double rotationToDistance(double currentRotation) {
-        return (currentRotation / maxRotation) * maxDistance.getValue();
+        return (currentRotation / maxRotation) * maxDistance.toValue();
     }
 
     public double distanceToRotation(double currentDistance) {
-        return (currentDistance / maxDistance.getValue()) * maxRotation;
+        return (currentDistance / maxDistance.toValue()) * maxRotation;
     }
 }

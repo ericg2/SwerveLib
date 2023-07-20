@@ -1,5 +1,7 @@
 package com.ericg2.swervelib.math;
 
+import edu.wpi.first.math.geometry.Rotation2d;
+
 public class GearRatio {
 
     private final double ratio;
@@ -7,23 +9,23 @@ public class GearRatio {
         this.ratio = ratio;
     }
 
-    public double degreesToMotorRotations(Angle angle) {
-        return (ratio / 360) * angle.getValue(AngleUnit.DEGREES);
+    public double angleToMotorRotations(Rotation2d angle) {
+        return (ratio / 360) * angle.getDegrees();
     }
 
-    public Angle motorRotationsToAngle(double rotations) {
-        return Angle.fromValue((360 / ratio) * rotations, AngleUnit.DEGREES);
+    public Rotation2d motorRotationsToAngle(double rotations) {
+        return Rotation2d.fromDegrees((360 / ratio) * rotations);
     }
 
-    public Velocity getWheelSpeed(double motorRotations, Distance wheelDiameter) {
-        double diameter = wheelDiameter.getValue(DistanceUnit.METERS);
+    public Velocity getWheelVelocity(double motorRotations, Distance wheelDiameter) {
+        double diameter = wheelDiameter.toMeters();
 
         // convert motor rotations to degrees
         return Velocity.fromValue((2 * (Math.PI * (diameter / 2))) * ((motorRotations * ratio) / 60), VelocityUnit.MPS);
     }
 
     public Distance getWheelDistance(double motorRotations, Distance wheelDiameter) {
-        double diameter = wheelDiameter.getValue(DistanceUnit.METERS);
+        double diameter = wheelDiameter.toMeters();
 
         return Distance.fromValue((2 * (Math.PI * (diameter / 2))) * ((motorRotations * ratio)), DistanceUnit.METERS);
     }
@@ -33,15 +35,15 @@ public class GearRatio {
         return new GearRatio(ratio);
     }
 
-    public static double angleToMotorRotations(Angle angle, double ratio) {
-        return (ratio / 360) * angle.getValue(AngleUnit.DEGREES);
+    public static double angleToMotorRotations(Rotation2d angle, double ratio) {
+        return (ratio / 360) * angle.getDegrees();
     }
 
-    public static Angle motorRotationsToAngle(double rotations, double ratio) {
-        return Angle.fromValue((360 / ratio) * rotations, AngleUnit.DEGREES);
+    public static Rotation2d motorRotationsToAngle(double rotations, double ratio) {
+        return Rotation2d.fromDegrees((360 / ratio) * rotations);
     }
 
-    public static Velocity getWheelSpeed(double motorRotations, double wheelRadius, double ratio) {
+    public static Velocity getWheelVelocity(double motorRotations, double wheelRadius, double ratio) {
         return Velocity.fromValue((2 * (Math.PI * wheelRadius)) * ((motorRotations * ratio) / 60), VelocityUnit.MPS);
     }
 }

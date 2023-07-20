@@ -1,6 +1,8 @@
 package com.ericg2.swervelib.math;
 
-public class Velocity {
+import edu.wpi.first.math.MathUtil;
+
+public class Velocity implements GetterValue {
     private double metersPerSecondValue;
     private VelocityUnit unit;
 
@@ -9,31 +11,44 @@ public class Velocity {
         this.unit = unit;
     }
 
-    public Velocity setSpeed(double value, VelocityUnit unit) {
+    public Velocity setVelocity(double value, VelocityUnit unit) {
         this.metersPerSecondValue = convert(value, unit, VelocityUnit.MPS);
         this.unit = unit;
         return this;
     }
 
     public double toMotorPower(Velocity maxSpeed) {
-        return getValue(VelocityUnit.MPS) / maxSpeed.getValue(VelocityUnit.MPS);
+        return toMPS() / maxSpeed.toMPS();
     }
 
     public VelocityUnit getSpeedUnit() {
         return this.unit;
     }
 
-    public double getValue(VelocityUnit unit) {
+    public double toValue(VelocityUnit unit) {
         return convert(metersPerSecondValue, VelocityUnit.MPS, unit);
     }
 
-    public double getValue() {
+    @Override
+    public double toValue() {
         return convert(metersPerSecondValue, VelocityUnit.MPS, this.unit);
     }
+
+    public double toMPH() { return toValue(VelocityUnit.MPH); }
+    public double toMPS() { return toValue(VelocityUnit.MPS); }
+    public double toKPH() { return toValue(VelocityUnit.KPH); }
 
     public static Velocity fromValue(double value, VelocityUnit unit) {
         return new Velocity(value, unit);
     }
+
+    public static Velocity fromMotorPower(double value, Velocity maxSpeed) {
+        return Velocity.fromMPS(MathUtil.clamp(value, -1, 1) * maxSpeed.toMPS());
+    }
+
+    public static Velocity fromMPH(double value) { return fromValue(value, VelocityUnit.MPH); }
+    public static Velocity fromMPS(double value) { return fromValue(value, VelocityUnit.MPS); }
+    public static Velocity fromKPH(double value) { return fromValue(value, VelocityUnit.KPH); }
 
     public static double convert(double value, VelocityUnit oldUnit, VelocityUnit newUnit) {
         switch (oldUnit) {

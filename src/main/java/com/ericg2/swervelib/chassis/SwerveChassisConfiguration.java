@@ -1,26 +1,21 @@
-package com.ericg2.swervelib;
+package com.ericg2.swervelib.chassis;
 
 import com.ericg2.swervelib.math.Distance;
-import com.ericg2.swervelib.math.Velocity;
+import com.ericg2.swervelib.module.SwerveModule;
 import com.kauailabs.navx.frc.AHRS;
 
 public class SwerveChassisConfiguration {
     private Distance sideLength;
-    private Velocity maxSpeed;
     private AHRS gyro;
-
     private SwerveModule flModule;
     private SwerveModule frModule;
     private SwerveModule blModule;
     private SwerveModule brModule;
 
+    private boolean gyroInverted = true;
+
     public SwerveChassisConfiguration setSideLength(Distance sideLength) {
         this.sideLength = sideLength;
-        return this;
-    }
-
-    public SwerveChassisConfiguration setMaxSpeed(Velocity maxSpeed) {
-        this.maxSpeed = maxSpeed;
         return this;
     }
 
@@ -49,11 +44,36 @@ public class SwerveChassisConfiguration {
         return this;
     }
 
+    public SwerveChassisConfiguration setGyroInverted(boolean inverted) {
+        this.gyroInverted = inverted;
+        return this;
+    }
+
     public Distance getSideLength() { return this.sideLength; }
-    public Velocity getMaxSpeed() { return this.maxSpeed; }
     public AHRS getGyro() { return this.gyro; }
-    public SwerveModule getFrontLeftModule() { return this.flModule; }
-    public SwerveModule getFrontRightModule() { return this.frModule; }
-    public SwerveModule getBackLeftModule() { return this.blModule;}
-    public SwerveModule getBackRightModule() { return this.brModule; }
+    public SwerveModule getFrontLeft() { return this.flModule; }
+    public SwerveModule getFrontRight() { return this.frModule; }
+    public SwerveModule getBackLeft() { return this.blModule;}
+    public SwerveModule getBackRight() { return this.brModule; }
+    public boolean isGyroInverted() { return this.gyroInverted; }
+
+    public boolean validate() {
+        if (sideLength == null)
+            return false;
+        if (gyro == null)
+            return false;
+        if (flModule == null)
+            return false;
+        if (frModule == null)
+            return false;
+        if (blModule == null)
+            return false;
+        if (brModule == null)
+            return false;
+
+        if (sideLength.toMeters() <= 0)
+            return false;
+
+        return gyro.isConnected();
+    }
 }

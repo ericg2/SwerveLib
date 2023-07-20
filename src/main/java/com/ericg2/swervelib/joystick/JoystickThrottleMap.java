@@ -1,0 +1,14 @@
+package com.ericg2.swervelib.joystick;
+
+import edu.wpi.first.math.filter.SlewRateLimiter;
+
+public interface JoystickThrottleMap {
+    SlewRateLimiter NO_LIMIT = null;
+    SlewRateLimiter DEFAULT_LIMIT = new SlewRateLimiter(0.5);
+
+    double getX(double xVel);
+    double getY(double yVel);
+    double getTwist(double twistVel);
+
+    SlewRateLimiter getRateLimiter();
+}

@@ -1,7 +1,7 @@
 package com.ericg2.swervelib.math;
 
 
-public class Distance {
+public class Distance implements GetterValue {
     private double meterValue;
     private DistanceUnit unit;
 
@@ -20,17 +20,25 @@ public class Distance {
         return this.unit;
     }
 
-    public double getValue(DistanceUnit unit) {
+    public double toValue(DistanceUnit unit) {
         return convert(meterValue, DistanceUnit.METERS, unit);
     }
 
-    public double getValue() {
+    @Override
+    public double toValue() {
         return convert(meterValue, DistanceUnit.METERS, this.unit);
     }
 
-    public static Distance fromValue(double value, DistanceUnit unit) {
-        return new Distance(value, unit);
-    }
+    public double toMeters() { return toValue(DistanceUnit.METERS); }
+    public double toFeet() { return toValue(DistanceUnit.FEET); }
+    public double toInches() { return toValue(DistanceUnit.INCHES); }
+    public double toCentimeters() { return toValue(DistanceUnit.CENTIMETERS); }
+
+    public static Distance fromValue(double value, DistanceUnit unit) { return new Distance(value, unit); }
+    public static Distance fromMeters(double value) { return fromValue(value, DistanceUnit.METERS); }
+    public static Distance fromFeet(double value) { return fromValue(value, DistanceUnit.FEET); }
+    public static Distance fromInches(double value) { return fromValue(value, DistanceUnit.INCHES); }
+    public static Distance fromCentimeters(double value) { return fromValue(value, DistanceUnit.CENTIMETERS); }
 
     public static double convert(double value, DistanceUnit oldUnit, DistanceUnit newUnit) {
         switch (oldUnit) {
