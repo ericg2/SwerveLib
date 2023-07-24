@@ -20,12 +20,11 @@ import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 public class RobotContainer {
     private static SmoothThrottleMap throttleMap = new SmoothThrottleMap();
 
-    public static SwerveDriveSubsystem swerve;
-
     public static DriveJoystick xyStick = new DriveJoystick(0, true, true, true, throttleMap, true);
     public static DriveJoystick zStick = new DriveJoystick(1, true, true, true, throttleMap, true);
     public static CommandXboxController xbox = new CommandXboxController(2);
 
-    public RobotContainer() { {
+    public RobotContainer() {
+
     }
 }

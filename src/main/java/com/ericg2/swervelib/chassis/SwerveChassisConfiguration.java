@@ -2,6 +2,7 @@ package com.ericg2.swervelib.chassis;
 
 import com.ericg2.swervelib.math.Distance;
 import com.ericg2.swervelib.module.SwerveModule;
+import com.ericg2.swervelib.module.SwerveModuleConfiguration;
 import com.kauailabs.navx.frc.AHRS;
 
 public class SwerveChassisConfiguration {
@@ -34,19 +35,18 @@ public class SwerveChassisConfiguration {
     public SwerveChassisConfiguration(
             Distance sideLength,
             AHRS gyro,
-            SwerveModule flModule,
-            SwerveModule frModule,
-            SwerveModule blModule,
-            SwerveModule brModule) {
-        this(
-                sideLength,
-                gyro,
-                flModule,
-                frModule,
-                blModule,
-                brModule,
-                false
-        );
+            SwerveModuleConfiguration flModule,
+            SwerveModuleConfiguration frModule,
+            SwerveModuleConfiguration blModule,
+            SwerveModuleConfiguration brModule,
+            boolean gyroInverted) {
+        this.sideLength = sideLength;
+        this.gyro = gyro;
+        this.flModule = new SwerveModule(flModule);
+        this.frModule = new SwerveModule(frModule);
+        this.blModule = new SwerveModule(blModule);
+        this.brModule = new SwerveModule(brModule);
+        this.gyroInverted = gyroInverted;
     }
 
     /*
