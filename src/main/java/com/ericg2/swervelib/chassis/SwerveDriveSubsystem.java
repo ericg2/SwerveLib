@@ -13,6 +13,7 @@ import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.*;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
@@ -29,11 +30,7 @@ public class SwerveDriveSubsystem extends SubsystemBase {
     private double pitchOffset = 0.0;
     private double rollOffset = 0.0;
 
-    public SwerveDriveSubsystem(SwerveChassisConfiguration config) throws InvalidConfigurationException {
-        if (config == null || !config.validate()) {
-            throw new InvalidConfigurationException("Swerve Chassis Config is invalid!");
-        }
-        this.config = config;
+    public SwerveDriveSubsystem(SwerveChassisConfiguration config) {
         double sideLengthMeters = config.getSideLength().toMeters();
 
         // +X = Forward | +Y = Left
@@ -43,6 +40,8 @@ public class SwerveDriveSubsystem extends SubsystemBase {
                 new Translation2d(-sideLengthMeters / 2, sideLengthMeters / 2), // BL
                 new Translation2d(-sideLengthMeters / 2, -sideLengthMeters / 2) // BR
         );
+
+        this.config = config;
 
         // Perform the initial calibration on the gyroscope for the best result.
         config.getGyro().calibrate();
@@ -84,6 +83,9 @@ public class SwerveDriveSubsystem extends SubsystemBase {
     }
 
     public Velocity getMaxVelocity() {
+        if (config == null)
+            return Velocity.fromMPS(0); // may be called too soon
+
         return Velocity.fromMPS(
                 ExtendedMath.min(
                     config.getFrontLeft().getMaxVelocity(),
@@ -142,6 +144,10 @@ public class SwerveDriveSubsystem extends SubsystemBase {
         ChassisSpeeds velocity = fieldRelative ?
                 ChassisSpeeds.fromFieldRelativeSpeeds(xVel, yVel, omegaVel, getHeading())
                 : new ChassisSpeeds(xVel, yVel, omegaVel);
+
+        SmartDashboard.putNumber("Desired X-Vel", xVel);
+        SmartDashboard.putNumber("Desired Y-Vel", yVel);
+        SmartDashboard.putNumber("Desired Twist Vel", omegaVel);
 
         setStates(kinematics.toSwerveModuleStates(velocity), isClosedLoop);
     }

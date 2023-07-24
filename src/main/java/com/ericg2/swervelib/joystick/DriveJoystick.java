@@ -46,13 +46,17 @@ public class DriveJoystick extends CommandJoystick implements DriveController {
     public boolean isSideAxisInverted() { return this.sideAxisInverted; }
     public boolean isTwistAxisInverted() { return this.twistAxisInverted; }
 
-    public DriveJoystick(int port) {
+    public DriveJoystick(int port, boolean forwardInverted, boolean sideInverted, boolean twistInverted, JoystickThrottleMap throttleMap, boolean tcsEnabled) {
         super(port);
-        this.throttleMap = new LinearThrottleMap();
-        this.tcsEnabled = true;
-        this.sideAxisInverted = true;
-        this.forwardAxisInverted = true;
-        this.twistAxisInverted = false;
+        this.forwardAxisInverted = forwardInverted;
+        this.sideAxisInverted = sideInverted;
+        this.twistAxisInverted = twistInverted;
+        this.throttleMap = throttleMap;
+        this.tcsEnabled = tcsEnabled;
+    }
+
+    public DriveJoystick(int port) {
+        this(port, true, true, true, new LinearThrottleMap(), true);
     }
 
     @Override

@@ -3,9 +3,9 @@ package com.ericg2.swervelib.joystick;
 import com.ericg2.swervelib.math.AngularVelocity;
 import com.ericg2.swervelib.math.Velocity;
 import edu.wpi.first.math.filter.SlewRateLimiter;
-import edu.wpi.first.wpilibj.XboxController;
+import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 
-public class DriveXboxController extends XboxController implements DriveController {
+public class DriveXboxController extends CommandXboxController implements DriveController {
     private JoystickThrottleMap throttleMap;
     private boolean tcsEnabled;
 
@@ -44,19 +44,30 @@ public class DriveXboxController extends XboxController implements DriveControll
     public boolean isSideAxisInverted() { return this.sideAxisInverted; }
     public boolean isTwistAxisInverted() { return this.twistAxisInverted; }
 
-    public DriveXboxController(int port) {
+    public DriveXboxController(int port, boolean forwardInverted, boolean sideInverted, boolean twistInverted, JoystickThrottleMap throttleMap, boolean tcsEnabled) {
         super(port);
-        this.throttleMap = new LinearThrottleMap();
-        this.tcsEnabled = true;
-        this.sideAxisInverted = true;
-        this.forwardAxisInverted = true;
-        this.twistAxisInverted = false;
+        this.forwardAxisInverted = forwardInverted;
+        this.sideAxisInverted = sideInverted;
+        this.twistAxisInverted = twistInverted;
+        this.throttleMap = throttleMap;
+        this.tcsEnabled = tcsEnabled;
+    }
+
+    public DriveXboxController(int port) {
+        this(port, true, true, true, new LinearThrottleMap(), true);
+    }
+
+    public double deadband(double value) {
+        return (Math.abs(value) <= 0.05) ? 0 : value;
     }
 
     @Override
     public double getLeftX() {
-        double val = super.getLeftX();
+        double val = deadband(super.getLeftX());
         val = throttleMap.getX(val);
+
+        if (val == 0)
+            return 0;
 
         if (tcsEnabled) {
             SlewRateLimiter limiter = throttleMap.getRateLimiter();
@@ -68,8 +79,11 @@ public class DriveXboxController extends XboxController implements DriveControll
     }
     @Override
     public double getLeftY() {
-        double val = super.getLeftY();
+        double val = deadband(super.getLeftY());
         val = throttleMap.getY(val);
+
+        if (val == 0)
+            return 0;
 
         if (tcsEnabled) {
             SlewRateLimiter limiter = throttleMap.getRateLimiter();
@@ -82,8 +96,11 @@ public class DriveXboxController extends XboxController implements DriveControll
 
     @Override
     public double getRightX() {
-        double val = super.getRightX();
+        double val = deadband(super.getRightX());
         val = throttleMap.getTwist(val);
+
+        if (val == 0)
+            return 0;
 
         if (tcsEnabled) {
             SlewRateLimiter limiter = throttleMap.getRateLimiter();

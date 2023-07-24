@@ -17,17 +17,29 @@ public class GearRatio {
         return Rotation2d.fromDegrees((360 / ratio) * rotations);
     }
 
-    public Velocity getWheelVelocity(double motorRotations, Distance wheelDiameter) {
-        double diameter = wheelDiameter.toMeters();
+    public Rotation2d motorRotationsToAngle(double rotations, boolean max360) {
+        double deg = (360 / ratio) * rotations;
+        if (max360) 
+            return Rotation2d.fromDegrees(deg % 360);
+        else 
+            return Rotation2d.fromDegrees(deg);
+        
+    }
+
+    public Velocity getWheelVelocity(double motorRPM, Distance wheelDiameter) {
+        double radius = (wheelDiameter.toMeters() / 2);
+        double adjustedRPM = motorRotationsToAngle(motorRPM).getRotations();
 
         // convert motor rotations to degrees
-        return Velocity.fromValue((2 * (Math.PI * (diameter / 2))) * ((motorRotations * ratio) / 60), VelocityUnit.MPS);
+        return Velocity.fromMPS(radius * (Math.PI * 2) * (adjustedRPM / 60));
     }
 
     public Distance getWheelDistance(double motorRotations, Distance wheelDiameter) {
-        double diameter = wheelDiameter.toMeters();
+        double radius = (wheelDiameter.toMeters() / 2);
+        double adjustedRotations = motorRotationsToAngle(motorRotations).getRotations();
 
-        return Distance.fromValue((2 * (Math.PI * (diameter / 2))) * ((motorRotations * ratio)), DistanceUnit.METERS);
+        // convert motor rotations to degrees
+        return Distance.fromMeters(radius * (Math.PI * 2) * adjustedRotations);
     }
 
 
