@@ -37,9 +37,13 @@ public class SwerveModule {
     public SwerveModuleConfiguration getConfig() { return config; }
 
     private Rotation2d getTurnAngleNoOffset() {
+        /*
         return config
                 .getTurnRatio()
                 .motorRotationsToAngle(config.getTurnEncoder().get(), true);
+
+         */
+        return Rotation2d.fromRotations(config.getTurnEncoder().get());
     }
 
     public Rotation2d getTurnAngle() {
@@ -87,7 +91,7 @@ public class SwerveModule {
     /**
      * Get the {@link SwerveModulePosition} based on the drive motor's
      * distance travelled (in meters), and turn encoder's angle. This
-     * is required for {@link SwerveOdometry} to work correctly.
+     * is required for to work correctly.
      *
      * @return A {@link SwerveModulePosition}, representing the module's
      * current position, based on the module's drive motor distance and

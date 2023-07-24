@@ -8,12 +8,12 @@ public enum SwerveModuleSide {
     BACK_RIGHT;
     @Override
     public String toString() {
-        return switch (this) {
-            case FRONT_LEFT -> "FL";
-            case FRONT_RIGHT -> "FR";
-            case BACK_LEFT -> "BL";
-            case BACK_RIGHT -> "BR";
-            default -> "NONE";
-        };
+        switch (this) {
+            case FRONT_LEFT: return "FL";
+            case FRONT_RIGHT: return"FR";
+            case BACK_LEFT: return "BL";
+            case BACK_RIGHT: return "BR";
+            default: return "NONE";
+        }
     }
 }

@@ -1,17 +1,21 @@
 package com.ericg2.swervelib;
 
+import com.ericg2.swervelib.chassis.SwerveChassisConfiguration;
 import com.ericg2.swervelib.math.*;
 import com.ericg2.swervelib.module.SwerveModule;
 import com.ericg2.swervelib.module.SwerveModuleConfiguration;
 import com.ericg2.swervelib.module.SwerveModuleSide;
+import com.kauailabs.navx.frc.AHRS;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.wpilibj.SPI;
 
 public class Constants {
     public static class Chassis {
         public static GearRatio DRIVE_RATIO = GearRatio.fromRatio(6.86);
         public static GearRatio TURN_RATIO = GearRatio.fromRatio(12.8);
         public static Distance WHEEL_SIZE = Distance.fromInches(4);
+        public static Distance SIDE_LENGTH = Distance.fromInches(26);
 
         public static SwerveVelocities MAX_VELOCITY = new SwerveVelocities(
                 Velocity.fromMPS(4.4),
@@ -76,6 +80,16 @@ public class Constants {
                 WHEEL_SIZE,
                 SwerveModuleSide.BACK_RIGHT,
                 MAX_VELOCITY
+        );
+
+        public static SwerveChassisConfiguration CHASSIS_CONFIG = new SwerveChassisConfiguration(
+                SIDE_LENGTH,
+                new AHRS(SPI.Port.kMXP),
+                FL_CONFIG,
+                FR_CONFIG,
+                BL_CONFIG,
+                BR_CONFIG,
+                false
         );
     }
 }

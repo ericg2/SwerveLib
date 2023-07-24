@@ -30,6 +30,30 @@ public class SwerveDriveSubsystem extends SubsystemBase {
     private double pitchOffset = 0.0;
     private double rollOffset = 0.0;
 
+    private boolean fieldOriented = true;
+    private boolean closedLoop = true;
+
+    public void setFieldOriented(boolean value){
+        fieldOriented = value;
+    }
+    public void setClosedLoop(boolean value){
+        closedLoop = value;
+    }
+    public boolean isFieldOriented(){
+        return fieldOriented;
+    }
+    public boolean isClosedLoop(){
+        return closedLoop;
+    }
+
+    public void toggleFieldOriented(){
+        fieldOriented = !fieldOriented;
+    }
+    public void toggleClosedLoop(){
+        closedLoop = !closedLoop;
+    }
+
+
     public SwerveDriveSubsystem(SwerveChassisConfiguration config) {
         double sideLengthMeters = config.getSideLength().toMeters();
 
@@ -68,6 +92,9 @@ public class SwerveDriveSubsystem extends SubsystemBase {
         config.getBackRight().update();
 
         robotPose = odometry.update(getHeading(), getModulePositions());
+
+        SmartDashboard.putString("Robot Pose", robotPose.toString());
+        SmartDashboard.putNumber("Robot Heading", getHeading().getDegrees());
     }
 
     public Rotation2d getHeading() {
@@ -135,7 +162,9 @@ public class SwerveDriveSubsystem extends SubsystemBase {
         config.getBackLeft().setState(states[2], isClosedLoop);
         config.getBackRight().setState(states[3], isClosedLoop);
     }
-
+    public void drive(SwerveVelocities velocities){
+        drive(velocities, fieldOriented, closedLoop);
+    }
     public void drive(SwerveVelocities velocities, boolean fieldRelative, boolean isClosedLoop) {
         double xVel = velocities.getForwardVelocity().toMPS();
         double yVel = velocities.getSideVelocity().toMPS();
@@ -152,6 +181,9 @@ public class SwerveDriveSubsystem extends SubsystemBase {
         setStates(kinematics.toSwerveModuleStates(velocity), isClosedLoop);
     }
 
+    public void drive(DriveXboxController xbox){
+        drive(xbox, fieldOriented, closedLoop);
+    }
     public void drive(DriveXboxController xbox, boolean fieldRelative, boolean isClosedLoop) {
         drive(SwerveVelocities.fromVelocities(
                 xbox.getForwardVelocity(getMaxVelocity()),
@@ -159,7 +191,9 @@ public class SwerveDriveSubsystem extends SubsystemBase {
                 xbox.getTwistVelocity(getMaxTurnVelocity())
         ), fieldRelative, isClosedLoop);
     }
-
+    public void drive(DriveJoystick xystick, DriveJoystick zstick){
+        drive(xystick, zstick, fieldOriented, closedLoop);
+    }
     public void drive(DriveJoystick xyStick, DriveJoystick zStick, boolean fieldRelative, boolean isClosedLoop) {
         drive(SwerveVelocities.fromVelocities(
                 xyStick.getForwardVelocity(getMaxVelocity()),

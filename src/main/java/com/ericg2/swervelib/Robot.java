@@ -6,35 +6,11 @@
 package com.ericg2.swervelib;
 
 import com.ericg2.swervelib.chassis.SwerveDriveSubsystem;
-import com.ericg2.swervelib.exception.InvalidConfigurationException;
-
-import com.ericg2.swervelib.joystick.DriveXboxController;
-import com.ericg2.swervelib.joystick.SmoothThrottleMap;
-import com.ericg2.swervelib.math.AngularVelocity;
-import com.ericg2.swervelib.math.GearRatio;
-import com.ericg2.swervelib.math.SwerveVelocities;
-import com.ericg2.swervelib.math.Velocity;
-import com.ericg2.swervelib.sim.AutoDutyCycleEncoder;
-import com.ericg2.swervelib.sim.AutoRelativeEncoder;
-import com.ericg2.swervelib.sim.AutoSparkMax;
-import com.pathplanner.lib.PathConstraints;
-import com.pathplanner.lib.PathPlanner;
-import com.pathplanner.lib.PathPlannerTrajectory;
 import com.pathplanner.lib.server.PathPlannerServer;
-import com.revrobotics.CANSparkMax;
-import com.revrobotics.CANSparkMaxLowLevel;
-import edu.wpi.first.math.filter.SlewRateLimiter;
-import edu.wpi.first.math.geometry.Rotation2d;
-import edu.wpi.first.math.kinematics.ChassisSpeeds;
-import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.wpilibj.TimedRobot;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
-import edu.wpi.first.wpilibj2.command.Commands;
 
-import static com.ericg2.swervelib.RobotContainer.swerve;
-import static com.ericg2.swervelib.RobotContainer.xbox;
+import static com.ericg2.swervelib.Constants.Chassis.CHASSIS_CONFIG;
 
 
 /**
@@ -45,6 +21,7 @@ import static com.ericg2.swervelib.RobotContainer.xbox;
  */
 public class Robot extends TimedRobot {
     public static SwerveDriveSubsystem swerve;
+    private RobotContainer robotContainer;
 
     /**
      * This method is called every robot packet, no matter the mode. Use this for items like
@@ -57,7 +34,8 @@ public class Robot extends TimedRobot {
     public void robotInit() {
         PathPlannerServer.startServer(5811);
 
-
+        swerve = new SwerveDriveSubsystem(CHASSIS_CONFIG);
+        robotContainer = new RobotContainer();
     }
 
     @Override
