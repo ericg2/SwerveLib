@@ -49,44 +49,6 @@ public class SwerveChassisConfiguration {
         this.gyroInverted = gyroInverted;
     }
 
-    /*
-    public SwerveChassisConfiguration setSideLength(Distance sideLength) {
-        this.sideLength = sideLength;
-        return this;
-    }
-
-    public SwerveChassisConfiguration setGyro(AHRS gyro) {
-        this.gyro = gyro;
-        return this;
-    }
-
-    public SwerveChassisConfiguration setFrontLeftModule(SwerveModule module) {
-        this.flModule = module;
-        return this;
-    }
-
-    public SwerveChassisConfiguration setFrontRightModule(SwerveModule module) {
-        this.frModule = module;
-        return this;
-    }
-
-    public SwerveChassisConfiguration setBackLeftModule(SwerveModule module) {
-        this.blModule = module;
-        return this;
-    }
-
-    public SwerveChassisConfiguration setBackRightModule(SwerveModule module) {
-        this.brModule = module;
-        return this;
-    }
-
-    public SwerveChassisConfiguration setGyroInverted(boolean inverted) {
-        this.gyroInverted = inverted;
-        return this;
-    }
-
-     */
-
     public Distance getSideLength() { return this.sideLength; }
     public AHRS getGyro() { return this.gyro; }
     public SwerveModule getFrontLeft() { return this.flModule; }

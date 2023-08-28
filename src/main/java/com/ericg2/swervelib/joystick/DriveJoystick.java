@@ -55,6 +55,10 @@ public class DriveJoystick extends CommandJoystick implements DriveController {
         this.tcsEnabled = tcsEnabled;
     }
 
+    public DriveJoystick(int port, JoystickThrottleMap throttleMap, boolean tcsEnabled) {
+        this(port, true, true, true, throttleMap, tcsEnabled);
+    }
+
     public DriveJoystick(int port) {
         this(port, true, true, true, new LinearThrottleMap(), true);
     }
